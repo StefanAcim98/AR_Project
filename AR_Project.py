@@ -22,6 +22,9 @@ orb = cv2.ORB_create(nfeatures=1000)
 kp1, des1 = orb.detectAndCompute(imgTarget, None)
 # imgTarget = cv2.drawKeypoints(imgTarget,kp1, None)
 
+# f = open("result.txt","w+")
+# helper = 0
+# source = 0
 while True:
     success, imgWebCam = cap.read()
     imgAug = imgWebCam.copy()
@@ -50,14 +53,19 @@ while True:
         if m.distance < 0.75 * n.distance:
             good.append(m)
     print(len(good))
-    imgFeatures = cv2.drawMatches(imgTarget, kp1, imgWebCam, kp2, good, None, flags=2)
-
+    # imgFeatures = cv2.drawMatches(imgTarget, kp1, imgWebCam, kp2, good, None, flags=2)
+    # helper += 1
+    # source += len(good)
+    # if helper == 100:
+    #     f.write(str(source/helper))
+    #     f.close()
     if len(good) > 15:
         detection = True
         srcPts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
         dstPts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
 
         matrix, mask = cv2.findHomography(srcPts, dstPts, cv2.RANSAC, 5)
+
         if np.any(matrix):
             pts = np.float32([[0, 0], [0, 500], [520, 500], [520, 0]]).reshape(-1, 1, 2)
             dst = cv2.perspectiveTransform(pts, matrix)
@@ -73,6 +81,10 @@ while True:
             imgAug = cv2.bitwise_or(imgWarp, imgAug)
 
             cv2.imshow('Webcam Target', imgAug)
+            # cv2.imshow('Image Warp', imgWarp)
+            # cv2.imshow('Image Features', imgFeatures)
+            # cv2.imshow('Image 2', img2)
+            # cv2.imshow('maskInverse', maskInverse)
 
         print(matrix)
 
@@ -80,9 +92,9 @@ while True:
     else:
         detection = False
         imgAug = 0
-    #     cv2.imshow('Image Warp', imgWarp)
-    #     cv2.imshow('Image 2', img2)
-    # cv2.imshow('Image Features', imgFeatures)
+
+
+
     # cv2.imshow('Image Target', imgTarget)
     # cv2.imshow('Video Target', imgVideo)
     if np.any(imgAug):
@@ -90,7 +102,7 @@ while True:
     else:
         cv2.imshow('Webcam Target', imgWebCam)
     frameCounter += 1
-    q = cv2.waitKey(20) & 0xff
+    q = cv2.waitKey(15) & 0xff
     if q == 27:
         break
 
