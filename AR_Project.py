@@ -59,7 +59,7 @@ while True:
     # if helper == 100:
     #     f.write(str(source/helper))
     #     f.close()
-    if len(good) > 15:
+    if len(good) > 11:
         detection = True
         srcPts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
         dstPts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -102,7 +102,7 @@ while True:
     else:
         cv2.imshow('Webcam Target', imgWebCam)
     frameCounter += 1
-    q = cv2.waitKey(15) & 0xff
+    q = cv2.waitKey(20) & 0xff
     if q == 27:
         break
 
